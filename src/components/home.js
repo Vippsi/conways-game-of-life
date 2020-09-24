@@ -65,10 +65,10 @@ const Home = (props) => {
   };
 
   const submitChanges = (size) => {
-    if (size > 25) {
+    if (size > 50) {
       size = 25;
       setTimeout(() => {
-        window.alert("Max grid size is 25");
+        window.alert("Max grid size is 50");
       });
     }
     props.handleChangeGrid(size);

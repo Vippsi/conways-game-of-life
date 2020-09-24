@@ -1,11 +1,4 @@
-import React, {
-  forwardRef,
-  useImperativeHandle,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
 import produce from "immer";
 import { presets } from "./presets";
@@ -246,11 +239,31 @@ const Grid = ({
     }
   }, [stepRunning]);
 
+
+  if(size <= 50 && size >= 40) {
+    size = 12
+  }
+  else if( size <= 40 && size > 25) {
+    size = 15
+  } else if(size === 25) {
+     size += 3
+  } else if (size < 25 && size >= 15) {
+    size = 30
+  } else if(size < 15){
+    size = 35
+  }
+  
+
   return (
     <div className="gridDivContainer">
       <p>{genRef.current}</p>
 
-      <input value={newPreset.name} onChange={handleChanges} name="name" placeholder='Preset Name'/>
+      <input
+        value={newPreset.name}
+        onChange={handleChanges}
+        name="name"
+        placeholder="Preset Name"
+      />
       <button
         className="gridButton"
         onClick={() => {
@@ -279,8 +292,7 @@ const Grid = ({
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: `repeat(${colsRef.current}, ${size + 4}px)`,
-          background: "rgb(131,58,180)",
+          gridTemplateColumns: `repeat(${colsRef.current}, ${size + 1}px)`,
           background:
             "linear-gradient(90deg, rgba(131,58,180,.5) 0%, rgba(253,29,29,.5) 50%, rgba(252,176,69,.5) 100%)",
         }}
@@ -299,8 +311,8 @@ const Grid = ({
                 simRunning || stepRunning || genRunning
                   ? {
                       pointerEvents: "none",
-                      width: size + 3,
-                      height: size + 3,
+                      width: size,
+                      height: size,
                       backgroundColor: grid[i][k]
                         ? "rgba(255,255,255, .3)"
                         : undefined,
@@ -308,8 +320,8 @@ const Grid = ({
                       boxShadow: "insert 0px 0px 20px 20px rgba(0,0,0,0.75)",
                     }
                   : {
-                      width: size + 3,
-                      height: size + 3,
+                      width: size,
+                      height: size,
 
                       background: grid[i][k]
                         ? "rgba(255,255,255, .5)"
