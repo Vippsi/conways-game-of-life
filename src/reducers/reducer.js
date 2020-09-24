@@ -7,24 +7,22 @@ import {
 } from "../actions";
 
 const initialState = {
-  height: 25,
-  width: 25,
-  isRunning: false,
+  size: 25,
+  isRunning: {
+    simRun: false,
+    stepRun: false,
+    genRun: false,
+  },
   cellColor: "blue",
   speed: 1000,
 };
 
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case START_RUNNING:
+    case CHANGE_GRID:
       return {
         ...state,
-        isRunning: true,
-      };
-    case STOP_RUNNING:
-      return {
-        ...state,
-        isRunning: false,
+        size: action.payload,
       };
 
     default:

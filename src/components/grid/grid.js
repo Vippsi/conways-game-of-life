@@ -1,8 +1,17 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { connect } from "react-redux";
 import produce from "immer";
+import { presets } from "./presets";
+import { handleChangeGrid } from "../../actions";
+import "../../App.css";
 
-const numRows = 25;
-const numCols = 25;
 const operations = [
   [0, 1],
   [0, -1],
@@ -14,47 +23,117 @@ const operations = [
   [-1, 0],
 ];
 
-const clearGrid = () => {
-  const rows = [];
-  for (let i = 0; i < numRows; i++) {
-    rows.push(Array.from(Array(numCols), () => 0));
-  }
-  return rows;
-};
+const Grid = ({
+  size,
+  runningRef,
+  running,
+  setRunning,
+  simRunningRef,
+  simRunning,
+  setSimRunning,
+  stepRunning,
+  stepRunningRef,
+  setStepRunning,
+  genRunningRef,
+  genRunning,
+  setGenRunning,
+  hiddenGen,
+  setHiddenGen,
+  clear,
+  setClear,
+  random,
+  setRandom,
+  handleChangeGrid,
+}) => {
+  let numCols = size;
+  let numRows = size;
 
-const Grid = () => {
-  const [grid, setGrid] = useState(() => {
-    const rows = [];
-    for (let i = 0; i < numRows; i++) {
-      rows.push(Array.from(Array(numCols), () => 0));
-    }
-    return rows;
-  });
+  const colsRef = useRef(numCols);
+  colsRef.current = numCols;
+  const rowsRef = useRef(numRows);
+  rowsRef.current = numRows;
+
+  const [toggled, setToggled] = useState(false);
+
+  const defaultPreset = {
+    name: "",
+  };
+
+  const [presetArr, setPresetArr] = useState(presets);
+
+  const [newPreset, setNewPreset] = useState(defaultPreset);
+
+  const handleChanges = (e) => {
+    setNewPreset({ ...newPreset, [e.target.name]: e.target.value });
+  };
+
+  const [gridTemplate, setGridTemplate] = useState();
+
+  useEffect(() => {
+    setGrid(() => {
+      if (gridTemplate === undefined) {
+        return;
+      }
+      let grid = gridTemplate;
+      for (const [key, value] of Object.entries(gridTemplate)) {
+        if (key === "Grid") {
+          grid = value;
+        }
+      }
+      return grid;
+    });
+  }, [gridTemplate, toggled]);
 
   const [gen, setGen] = useState(0);
   const genRef = useRef(gen);
   genRef.current = gen;
 
-  const [running, setRunning] = useState(false);
+  useEffect(() => {
+    setGrid(() => {
+      const rows = [];
+      for (let i = 0; i < rowsRef.current; i++) {
+        rows.push(Array.from(Array(colsRef.current), () => 0));
+      }
+      return rows;
+    });
+    colsRef.current = size;
+    rowsRef.current = size;
+  }, [size]);
 
-  const runningRef = useRef(running);
-  runningRef.current = running;
+  // Init grid
+  let [grid, setGrid] = useState(() => {
+    const rows = [];
+    for (let i = 0; i < rowsRef.current; i++) {
+      rows.push(Array.from(Array(colsRef.current), () => 0));
+    }
+    return rows;
+  });
 
+  // simulate
   const runSim = useCallback(() => {
-    if (!runningRef.current) {
+    if (
+      !simRunningRef.current &&
+      !stepRunningRef.current &&
+      !genRunningRef.current
+    ) {
       return;
     }
     setGen((genRef.current += 1));
 
     setGrid((g) => {
       return produce(g, (gridCopy) => {
-        for (let i = 0; i < numRows; i++) {
-          for (let k = 0; k < numCols; k++) {
+        for (let i = 0; i < rowsRef.current; i++) {
+          for (let k = 0; k < colsRef.current; k++) {
             let neighbours = 0;
             operations.forEach(([x, y]) => {
               const newI = i + x;
               const newK = k + y;
-              if (newI >= 0 && newI < numRows && newK >= 0 && newK < numCols) {
+              if (
+                newI >= 0 &&
+                newI < rowsRef.current &&
+                newK >= 0 &&
+                newK < colsRef.current
+              ) {
                 neighbours += g[newI][newK];
               }
             });
@@ -69,53 +148,132 @@ const Grid = () => {
     });
 
     setTimeout(runSim, 100);
-    // simulate
   }, []);
 
-  return (
-    <>
-      <p>{genRef.current}</p>
-      <button
-        onClick={() => {
-          setRunning(!running);
-          if (!running) {
-            runningRef.current = true;
-            runSim();
-          }
-        }}
-      >
-        {running ? "stop" : "start"}
-      </button>
-      <button
-        onClick={() => {
-          setGrid(clearGrid());
-          setGen((genRef.current = 0));
-          if (running) {
-            setRunning(false);
-            runningRef.current = false;
-          }
-        }}
-      >
-        clear
-      </button>
+  // console.log(grid);
+  // Makes a preset grid and saves it to state
+  const makePreset = (name, grid) => {
+    const presetObj = { Name: name, Grid: grid };
+    console.log(presetObj);
 
+    setPresetArr([...presetArr, presetObj]);
+  };
+
+  // Toggles running main Sim
+  useEffect(() => {
+    if (simRunning) {
+      runSim();
+    }
+  }, [simRunning]);
+
+  // Button Functions
+  const clearGrid = () => {
+    const rows = [];
+    for (let i = 0; i < rowsRef.current; i++) {
+      rows.push(Array.from(Array(colsRef.current), () => 0));
+    }
+    return rows;
+  };
+  // Toggles Clear Grid
+  useEffect(() => {
+    if (clear) {
+      setGrid(clearGrid());
+      setGen((genRef.current = 0));
+      setSimRunning(false);
+      setGenRunning(false);
+      setStepRunning(false);
+      // setClear(false);
+    }
+  }, [clear]);
+
+  // Toggles Random Grid
+  useEffect(() => {
+    if (random) {
+      const rows = [];
+      for (let i = 0; i < rowsRef.current; i++) {
+        rows.push(
+          Array.from(Array(colsRef.current), () =>
+            Math.random() > 0.7 ? 1 : 0
+          )
+        );
+      }
+      setGrid(rows);
+    }
+    setRandom(false);
+  }, [random]);
+
+  // This gets the gen for the current input
+  const getGen = useCallback(
+    (gen) => {
+      while (genRef.current < gen) {
+        runSim();
+      }
+      setGenRunning(false);
+
+      setTimeout(0.1);
+    },
+    [runSim]
+  );
+  // Toggles Gen Running
+  useEffect(() => {
+    if (genRunning) {
+      getGen(hiddenGen.generation);
+    }
+  }, [genRunning]);
+
+  // this steps through the gens 1 by 1
+  const stepGen = useCallback(
+    (gen) => {
+      runSim();
+      setStepRunning(false);
+
+      setTimeout(0.1);
+    },
+    [runSim]
+  );
+
+  //Toggles Stepping
+  useEffect(() => {
+    if (stepRunning) {
+      stepGen();
+    }
+  }, [stepRunning]);
+
+  return (
+    <div className="gridDivContainer">
+      <p>{genRef.current}</p>
+
+      <input value={newPreset.name} onChange={handleChanges} name="name" />
       <button
         onClick={() => {
-          const rows = [];
-          for (let i = 0; i < numRows; i++) {
-            rows.push(
-              Array.from(Array(numCols), () => (Math.random() > 0.7 ? 1 : 0))
-            );
-          }
-          setGrid(rows);
+          makePreset(newPreset.name, grid);
+          setNewPreset(defaultPreset);
         }}
       >
-        random
+        save preset
       </button>
+      <h3>Presets:</h3>
+      <div className="presetButtons">
+        {presetArr.map((preset) => (
+          <button
+            key={preset.Name}
+            onClick={async (e) => {
+              await handleChangeGrid(25);
+              setGridTemplate(preset);
+              setToggled(!toggled);
+            }}
+          >
+            {preset.Name}
+          </button>
+        ))}
+      </div>
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: `repeat(${numCols}, 21px)`,
+          gridTemplateColumns: `repeat(${colsRef.current}, ${size + 4}px)`,
+          background: "rgb(131,58,180)",
+          background:
+            "linear-gradient(90deg, rgba(131,58,180,.5) 0%, rgba(253,29,29,.5) 50%, rgba(252,176,69,.5) 100%)",
         }}
       >
         {grid.map((rows, i) =>
@@ -129,26 +287,40 @@ const Grid = () => {
                 setGrid(newGrid);
               }}
               style={
-                running
+                simRunning || stepRunning || genRunning
                   ? {
                       pointerEvents: "none",
-                      width: 20,
-                      height: 20,
-                      backgroundColor: grid[i][k] ? "blue" : undefined,
+                      width: size + 3,
+                      height: size + 3,
+                      backgroundColor: grid[i][k]
+                        ? "rgba(255,255,255, .3)"
+                        : undefined,
                       border: "1.3px solid black",
+                      boxShadow: "insert 0px 0px 20px 20px rgba(0,0,0,0.75)",
                     }
                   : {
-                      width: 20,
-                      height: 20,
-                      backgroundColor: grid[i][k] ? "blue" : undefined,
+                      width: size + 3,
+                      height: size + 3,
+
+                      background: grid[i][k]
+                        ? "rgba(255,255,255, .5)"
+                        : undefined,
                       border: "1.3px solid black",
+                      boxShadow: " insert 0px 0px 20px 20px rgba(0,0,0,0.75)",
                     }
               }
             />
           ))
         )}
       </div>
-    </>
+    </div>
   );
 };
-export default Grid;
+
+const mapStateToProps = (state) => {
+  return {
+    size: state.size,
+    isRunning: state.isRunning,
+  };
+};
+export default connect(mapStateToProps, { handleChangeGrid })(Grid);

@@ -1,11 +1,13 @@
 import React from "react";
-import Grid from "../src/components/grid/grid";
+import Home from "../src/components/home";
+import Grid from "./components/grid/grid";
+
 import "./App.css";
 
 function App() {
   return (
     <div className="App">
-      <Grid />
+      <Home />
     </div>
   );
 }
