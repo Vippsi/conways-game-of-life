@@ -44,9 +44,12 @@ const Grid = ({
   random,
   setRandom,
   handleChangeGrid,
+  speed,
 }) => {
   let numCols = size;
   let numRows = size;
+
+  console.log(speed);
 
   const colsRef = useRef(numCols);
   colsRef.current = numCols;
@@ -109,8 +112,12 @@ const Grid = ({
     return rows;
   });
 
+  const speedRef = useRef(speed);
+  speedRef.current = speed;
+
   // simulate
   const runSim = useCallback(() => {
+    let newSpeed = speed;
     if (
       !simRunningRef.current &&
       !stepRunningRef.current &&
@@ -147,7 +154,7 @@ const Grid = ({
       });
     });
 
-    setTimeout(runSim, 100);
+    setTimeout(runSim, parseInt(speedRef.current));
   }, []);
 
   // console.log(grid);
@@ -243,8 +250,9 @@ const Grid = ({
     <div className="gridDivContainer">
       <p>{genRef.current}</p>
 
-      <input value={newPreset.name} onChange={handleChanges} name="name" />
+      <input value={newPreset.name} onChange={handleChanges} name="name" placeholder='Preset Name'/>
       <button
+        className="gridButton"
         onClick={() => {
           makePreset(newPreset.name, grid);
           setNewPreset(defaultPreset);
@@ -256,6 +264,7 @@ const Grid = ({
       <div className="presetButtons">
         {presetArr.map((preset) => (
           <button
+            className="presetButton"
             key={preset.Name}
             onClick={async (e) => {
               await handleChangeGrid(25);

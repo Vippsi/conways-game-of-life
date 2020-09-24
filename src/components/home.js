@@ -49,19 +49,28 @@ const Home = (props) => {
   const [gridSize, setGridSize] = useState(defaultSize);
 
   const defaultValues = {
-    generation: 0,
+    generation: null,
   };
 
   const [hiddenGen, setHiddenGen] = useState(defaultValues);
+
+  const [speed, setSpeed] = useState(500);
+
+  const handleSpeedChanges = (e) => {
+    setSpeed(Number(e.target.value));
+  };
 
   const handleChanges = (e) => {
     setGridSize({ ...gridSize, [e.target.name]: e.target.value });
   };
 
   const submitChanges = (size) => {
-    // if (size > 25) {
-    //   size = 25;
-    // }
+    if (size > 25) {
+      size = 25;
+      setTimeout(() => {
+        window.alert("Max grid size is 25");
+      });
+    }
     props.handleChangeGrid(size);
   };
 
@@ -81,102 +90,118 @@ const Home = (props) => {
   return (
     <div>
       <div className="homeDiv">
-        <div className="optionsDiv">
-          <h2>The Game of Life!</h2>
+        <div className="options">
+          <h2>Conway's Game of Life!</h2>
+          <p>by Jonathan Thornton</p>
+          <h4>Grid Controls</h4>
 
-          <input value={gridSize.height} onChange={handleChanges} name="size" />
-          <button
-            onClick={() => {
-              submitChanges(gridSize.size);
-            }}
-          >
-            Change Size
-          </button>
-
-          <button
-            className="gridButton"
-            onClick={() => {
-              setSimRunning(!simRunning);
-              if (!simRunning) {
-                simRunningRef.current = true;
-                console.log(running.simRun, simRunningRef);
-              }
-              // runSim();
-            }}
-          >
-            {simRunning ? "Stop Simulation" : "Start Simulation"}
-          </button>
-
-          <button
-            className="gridButton"
-            onClick={() => {
-              setClear(!clear);
-              if (!clear) {
-                clearRef.current = true;
-              }
-            }}
-          >
-            Clear Grid
-          </button>
-
-          <button
-            className="gridButton"
-            onClick={() => {
-              setRandom(!random);
-              if (!random) {
-                randomRef.current = true;
-              }
-            }}
-          >
-            Random Grid
-          </button>
-
-          <button
-            className="gridButton"
-            onClick={() => {
-              console.log(stepRunning);
-              setStepRunning(!stepRunning);
-              if (!stepRunning) {
-                stepRunningRef.current = true;
-              }
-            }}
-          >
-            step Gen
-          </button>
-
-          <button
-            className="gridButton"
-            onClick={() => {
-              setGenRunning(!genRunning);
-              if (!genRunning) {
-                genRunningRef.current = true;
-              }
-            }}
-          >
-            Generate Gen
-          </button>
-
-          <form onSubmit={handleSubmit}>
+          <div className="gridControls">
             <input
-              value={hiddenGen.generation}
-              onChange={onHandleChanges}
-              name="generation"
+              value={gridSize.height}
+              onChange={handleChanges}
+              name="size"
+              className="gridInput"
+              placeholder="Grid Size"
             />
             <button
+              className="gridButton"
               onClick={() => {
-                setGenRunning(!genRunning);
-                if (!genRunning) {
-                  genRunningRef.current = true;
+                submitChanges(gridSize.size);
+              }}
+            >
+              Change Size
+            </button>
+            <div className="speedDiv">
+              <label>Speed</label>
+              <input
+                type="range"
+                min="50"
+                max="1500"
+                value={speed}
+                id="myRange"
+                onChange={handleSpeedChanges}
+                step="1"
+                style={{ direction: "ltr" }}
+              ></input>
+            </div>
+          </div>
+          <h4>Main Controls</h4>
+          <div className="mainControls">
+            <button
+              className="gridButton"
+              onClick={() => {
+                setSimRunning(!simRunning);
+                if (!simRunning) {
+                  simRunningRef.current = true;
+                  console.log(running.simRun, simRunningRef);
+                }
+                // runSim();
+              }}
+            >
+              {simRunning ? "Stop Simulation" : "Start Simulation"}
+            </button>
+            <button
+              className="gridButton"
+              onClick={() => {
+                setClear(!clear);
+                if (!clear) {
+                  clearRef.current = true;
                 }
               }}
             >
-              GENERATE
+              Clear Grid
             </button>
-          </form>
+            <button
+              className="gridButton"
+              onClick={() => {
+                setRandom(!random);
+                if (!random) {
+                  randomRef.current = true;
+                }
+              }}
+            >
+              Random Grid
+            </button>
+          </div>
+          <h4>Generation Controls</h4>
 
+          <div className="genControl">
+            <button
+              className="gridButton"
+              onClick={() => {
+                console.log(stepRunning);
+                setStepRunning(!stepRunning);
+                if (!stepRunning) {
+                  stepRunningRef.current = true;
+                }
+              }}
+            >
+              step Gen
+            </button>
+
+            <form onSubmit={handleSubmit}>
+              <input
+                value={hiddenGen.generation}
+                onChange={onHandleChanges}
+                name="generation"
+                placeholder="Skip to Generation"
+              />
+              <button
+                className="gridButtonForm"
+                onClick={() => {
+                  setGenRunning(!genRunning);
+                  if (!genRunning) {
+                    genRunningRef.current = true;
+                  }
+                }}
+              >
+                Go!
+              </button>
+            </form>
+          </div>
           <div>
             <ul className="rulesUl">
-              <h2>Rules:</h2>
+              <h3>Rules:</h3>
               <li>
                 Living cells that have two or three neighbors will remain alive
                 in the next generation.
@@ -217,6 +242,7 @@ const Home = (props) => {
             setClear={setClear}
             random={random}
             setRandom={setRandom}
+            speed={speed}
           />
         </div>
       </div>

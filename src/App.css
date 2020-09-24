@@ -2,6 +2,7 @@
 body {
   text-align: center;
   background-color: #3f4552;
+  font-family: "Permanent Marker", cursive;
 }
 
 .homeDiv {
@@ -13,8 +14,41 @@ body {
   height: 100vh;
   /* height: 100%; */
 }
+h4 {
+  font-size: 2rem;
+  margin: 1% 0 1% 0;
+  color: aliceblue;
+}
 .gridButton {
-  width: 30%;
+  width: 300px;
+  height: 50px;
+  background: linear-gradient(
+    90deg,
+    rgba(131, 58, 180, 0.5) 0%,
+    rgba(253, 29, 29, 0.5) 50%,
+    rgba(252, 176, 69, 0.5) 100%
+  );
+  border: 2px double #e74c3c;
+  color: aliceblue;
+  font-family: "Permanent Marker", cursive;
+  font-size: 1.8rem;
+  border-radius: 20px;
+}
+
+.gridButtonForm {
+  width: 300px;
+  height: 50px;
+  background: linear-gradient(
+    90deg,
+    rgba(131, 58, 180, 0.5) 0%,
+    rgba(253, 29, 29, 0.5) 50%,
+    rgba(252, 176, 69, 0.5) 100%
+  );
+  border: 2px double #e74c3c;
+  color: aliceblue;
+  font-family: "Permanent Marker", cursive;
+  font-size: 1.8rem;
+  border-radius: 20px;
 }
 
 .bigGridDivContainer {
@@ -32,9 +66,20 @@ body {
   align-items: center;
   box-shadow: inset 0px 0px 34px 0px rgba(0, 0, 0, 0.75);
   width: 90%;
-  padding-bottom: .5%;
+  padding-bottom: 0.5%;
   height: 90%;
+}
 
+.gridDivContainer h3,p {
+  font-size: 1.6rem;
+  margin: 0;
+  margin-top: 1%;
+  color: aliceblue;
+}
+
+.gridDivContainer input {
+  border-radius: 20px;
+  text-align: center;
 }
 
 /* Home Section*/
@@ -48,25 +93,113 @@ body {
   /* border: 1px solid blue; */
   height: 100%;
 }
+.options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
 
-.sizeDiv {
+.options h2 {
+  color: aliceblue;
+
+  font-size: 3rem;
+  margin: 0;
+}
+.options p {
+  color: aliceblue;
+
+  margin-bottom: 10%;
+}
+
+.gridControls {
+  display: flex;
+  /* flex-direction: column; */
+  width: 90%;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1%;
+  margin-bottom: 3%;
+}
+
+.gridControls input {
+  width: 300px;
+  height: 50px;
+  border-radius: 20px;
+  border: 2px double #e74c3c;
+  text-align: center;
+}
+
+.mainControls {
+  align-self: center;
+  display: flex;
+  /* flex-direction: column; */
+  justify-content: space-between;
+  width: 90%;
+  margin: 1%;
+  margin-bottom: 3%;
+
+}
+
+.genControl {
+  display: flex;
+  /* flex-direction: column; */
+  width: 90%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.genControl form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* justify-content: space-between; */
+  
+}
+.genControl form input {
+  width: 250px;
+  height: 50px;
+  border-radius: 20px;
+  text-align: center;
 }
 
 .presetButtons {
   display: flex;
-  width: 50%;
+  width: 95%;
   justify-content: space-evenly;
-  /* border: 1px solid red; */
   margin: 1%;
+}
+
+.presetButton {
+  width: 100px;
+  height: 50px;
+  background: linear-gradient(
+    90deg,
+    rgba(131, 58, 180, 0.5) 0%,
+    rgba(253, 29, 29, 0.5) 50%,
+    rgba(252, 176, 69, 0.5) 100%
+  );
+  border: 2px double #e74c3c;
+  color: aliceblue;
+  font-family: "Permanent Marker", cursive;
+  font-size: 1rem;
+  border-radius: 20px;
 }
 
 .rulesUl {
   display: flex;
   flex-direction: column;
 
-  /* border: 1px solid red; */
   width: 95%;
   height: 100%;
+  margin-top: 2%;
+}
+
+.rulesUl h3 {
+  font-size: 2rem;
+  text-align: center;
+  line-height: 2.5rem;
+  color: aliceblue;
 }
 
 .rulesUl h2,
@@ -78,4 +211,23 @@ li {
 
 .rulesUl li {
   font-size: 1.6rem;
+}
+
+.gridInput {
+  padding: 0;
+  margin: 0;
+}
+
+.speedDiv {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.speedDiv label {
+  font-size: 1.6rem;
+  color: aliceblue;
+  
 }
